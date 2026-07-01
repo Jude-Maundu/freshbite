@@ -1,0 +1,22 @@
+[
+  {
+    "id": "0fd5bd59-8033-41cb-b768-d779b8e196c7",
+    "bookingReference": "FB-20260701-001",
+    "customerName": "Naomi W.",
+    "phone": "0711223344",
+    "amount": 25000,
+    "method": "M-Pesa",
+    "status": "completed",
+    "createdAt": "2026-07-01"
+  },
+  {
+    "id": "payment-seed-1",
+    "bookingReference": "FB-20260701-001",
+    "customerName": "Naomi W.",
+    "phone": "0711223344",
+    "amount": 45000,
+    "method": "M-Pesa",
+    "status": "completed",
+    "createdAt": "2026-07-01"
+  }
+]

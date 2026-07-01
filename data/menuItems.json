@@ -1,0 +1,32 @@
+[
+  {
+    "id": "646856f8-5114-4d7f-ab61-8dc40a5b2f5f",
+    "name": "Fruit Parfait Cups",
+    "category": "Dessert",
+    "description": "Fresh fruit, yogurt, and crunchy granola cups.",
+    "price": 700,
+    "status": "featured",
+    "imageUrl": "/uploads/1782898825533-freshbites.jpeg",
+    "createdAt": "2026-07-01"
+  },
+  {
+    "id": "menu-seed-1",
+    "name": "Grilled Herb Chicken",
+    "category": "Main Course",
+    "description": "Tender grilled chicken served with fresh herbs and seasonal vegetables.",
+    "price": 1450,
+    "status": "featured",
+    "imageUrl": "",
+    "createdAt": "2026-07-01"
+  },
+  {
+    "id": "menu-seed-2",
+    "name": "Garden Quinoa Salad",
+    "category": "Salads",
+    "description": "Colorful quinoa salad with crisp greens, cucumber, tomatoes, and citrus dressing.",
+    "price": 950,
+    "status": "available",
+    "imageUrl": "",
+    "createdAt": "2026-07-01"
+  }
+]

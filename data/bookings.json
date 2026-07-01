@@ -1,0 +1,36 @@
+[
+  {
+    "id": "8c9a6b44-3822-423e-a99e-ba7a2357714d",
+    "reference": "FB-20260701-068",
+    "clientName": "Test Client",
+    "email": "test@example.com",
+    "phone": "0700000000",
+    "eventType": "Birthday Party",
+    "packageName": "Signature",
+    "eventDate": "2026-07-30",
+    "location": "Nairobi",
+    "guestCount": 80,
+    "servingStyle": "Buffet",
+    "paymentOption": "Deposit",
+    "specialRequests": "No nuts",
+    "status": "pending",
+    "createdAt": "2026-07-01"
+  },
+  {
+    "id": "booking-seed-1",
+    "reference": "FB-20260701-001",
+    "clientName": "Naomi W.",
+    "email": "naomi@example.com",
+    "phone": "0711223344",
+    "eventType": "Corporate Event",
+    "packageName": "Signature",
+    "eventDate": "2026-07-18",
+    "location": "Westlands, Nairobi",
+    "guestCount": 120,
+    "servingStyle": "Buffet",
+    "paymentOption": "Deposit",
+    "specialRequests": "Need vegetarian table options.",
+    "status": "pending",
+    "createdAt": "2026-07-01"
+  }
+]

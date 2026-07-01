@@ -1,0 +1,51 @@
+[
+  {
+    "token": "9c94e316-c09d-41a1-9bac-573dac0a18c3",
+    "email": "admin@freshbites.ke",
+    "role": "admin",
+    "name": "Fresh Bites Admin",
+    "createdAt": "2026-07-01T09:40:11.071Z"
+  },
+  {
+    "token": "0386460c-9c1d-414d-a001-98fcf6d206c8",
+    "email": "admin@freshbites.ke",
+    "role": "admin",
+    "name": "Fresh Bites Admin",
+    "createdAt": "2026-07-01T09:40:25.512Z"
+  },
+  {
+    "token": "dd529728-b1b2-4b7e-a005-16f6c4b949d5",
+    "email": "admin@freshbites.ke",
+    "role": "admin",
+    "name": "Fresh Bites Admin",
+    "createdAt": "2026-07-01T09:40:25.708Z"
+  },
+  {
+    "token": "36a4d1fd-0acb-4d6d-8eef-94c1e5b770d9",
+    "email": "admin@freshbites.ke",
+    "role": "admin",
+    "name": "Fresh Bites Admin",
+    "createdAt": "2026-07-01T09:41:00.540Z"
+  },
+  {
+    "token": "8805b6cc-7d43-4b1e-b7be-8470c87c1dad",
+    "email": "admin@freshbites.ke",
+    "role": "admin",
+    "name": "Fresh Bites Admin",
+    "createdAt": "2026-07-01T09:41:00.636Z"
+  },
+  {
+    "token": "4bf42f97-e9c7-4491-baea-7d220cc765bb",
+    "email": "admin@freshbites.ke",
+    "role": "admin",
+    "name": "Fresh Bites Admin",
+    "createdAt": "2026-07-01T09:44:10.266Z"
+  },
+  {
+    "token": "157bae36-b047-462b-80ee-19880012f8f4",
+    "email": "admin@freshbites.ke",
+    "role": "admin",
+    "name": "Fresh Bites Admin",
+    "createdAt": "2026-07-01T09:58:33.654Z"
+  }
+]
