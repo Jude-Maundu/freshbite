@@ -1,30 +1,90 @@
-const { v4: uuidv4 } = require('uuid');
+const mongoose = require('mongoose');
 
-function createBooking(payload) {
-  const timestamp = new Date();
-  const dateStamp = `${timestamp.getFullYear()}${String(timestamp.getMonth() + 1).padStart(2, '0')}${String(
-    timestamp.getDate()
-  ).padStart(2, '0')}`;
+const bookingSchema = new mongoose.Schema(
+  {
+    reference: {
+      type: String,
+      required: true,
+      unique: true,
+      index: true,
+    },
+    clientName: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    email: {
+      type: String,
+      required: true,
+      lowercase: true,
+      trim: true,
+    },
+    phone: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    eventType: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    packageName: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    eventDate: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    location: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    guestCount: {
+      type: Number,
+      required: true,
+      min: 1,
+    },
+    servingStyle: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    paymentOption: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    specialRequests: {
+      type: String,
+      default: '',
+      trim: true,
+    },
+    status: {
+      type: String,
+      enum: ['pending', 'confirmed', 'completed', 'cancelled'],
+      default: 'pending',
+    },
+    notes: {
+      type: String,
+      default: '',
+      trim: true,
+    },
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      default: null,
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
 
-  return {
-    id: uuidv4(),
-    reference: `FB-${dateStamp}-${String(timestamp.getTime()).slice(-3)}`,
-    clientName: payload.clientName,
-    email: payload.email,
-    phone: payload.phone,
-    eventType: payload.eventType,
-    packageName: payload.packageName,
-    eventDate: payload.eventDate,
-    location: payload.location,
-    guestCount: Number(payload.guestCount),
-    servingStyle: payload.servingStyle,
-    paymentOption: payload.paymentOption,
-    specialRequests: payload.specialRequests || '',
-    status: 'pending',
-    createdAt: timestamp.toISOString().slice(0, 10),
-  };
-}
+const Booking = mongoose.models.Booking || mongoose.model('Booking', bookingSchema);
 
-module.exports = {
-  createBooking,
-};
+module.exports = Booking;

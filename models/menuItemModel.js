@@ -1,18 +1,43 @@
-const { v4: uuidv4 } = require('uuid');
+const mongoose = require('mongoose');
 
-function createMenuItem(payload, imageUrl = '') {
-  return {
-    id: uuidv4(),
-    name: payload.name,
-    category: payload.category,
-    description: payload.description,
-    price: Number(payload.price),
-    status: payload.status || 'available',
-    imageUrl,
-    createdAt: new Date().toISOString().slice(0, 10),
-  };
-}
+const menuItemSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    category: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    description: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    price: {
+      type: Number,
+      required: true,
+      min: 0,
+    },
+    status: {
+      type: String,
+      enum: ['available', 'featured', 'seasonal', 'out-of-stock'],
+      default: 'available',
+    },
+    imageUrl: {
+      type: String,
+      default: '',
+      trim: true,
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
 
-module.exports = {
-  createMenuItem,
-};
+const MenuItem = mongoose.models.MenuItem || mongoose.model('MenuItem', menuItemSchema);
+
+module.exports = MenuItem;

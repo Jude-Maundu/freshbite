@@ -1,15 +1,21 @@
-const { readCollection } = require('../utils/fileStore');
+const Booking = require('../models/bookingModel');
+const Payment = require('../models/paymentModel');
+const MenuItem = require('../models/menuItemModel');
 
-const getDashboardSummary = async (req, res) => {
-  const bookings = await readCollection('bookings.json', []);
-  const payments = await readCollection('payments.json', []);
-  const menuItems = await readCollection('menuItems.json', []);
+async function getDashboardSummary(req, res) {
+  const todayStart = new Date();
+  todayStart.setHours(0, 0, 0, 0);
 
-  const todaysDate = new Date().toISOString().slice(0, 10);
-  const todaysBookings = bookings.filter((booking) => booking.createdAt === todaysDate).length;
-  const upcomingEvents = bookings.filter((booking) => booking.status !== 'completed').length;
-  const pendingQuotations = bookings.filter((booking) => booking.status === 'pending').length;
-  const revenueTotal = payments.reduce((sum, payment) => sum + Number(payment.amount), 0);
+  const [todaysBookings, upcomingEvents, pendingQuotations, revenueStats, menuCount, bookingCount, paymentCount] =
+    await Promise.all([
+      Booking.countDocuments({ createdAt: { $gte: todayStart } }),
+      Booking.countDocuments({ status: { $ne: 'completed' } }),
+      Booking.countDocuments({ status: 'pending' }),
+      Payment.aggregate([{ $group: { _id: null, total: { $sum: '$amount' } } }]),
+      MenuItem.countDocuments(),
+      Booking.countDocuments(),
+      Payment.countDocuments(),
+    ]);
 
   return res.json({
     success: true,
@@ -17,15 +23,15 @@ const getDashboardSummary = async (req, res) => {
       todaysBookings,
       upcomingEvents,
       pendingQuotations,
-      revenueTotal,
+      revenueTotal: revenueStats[0]?.total || 0,
       recentActivities: [
-        `${menuItems.length} menu items currently published`,
-        `${bookings.length} bookings in the system`,
-        `${payments.length} payments recorded`,
+        `${menuCount} menu items currently published`,
+        `${bookingCount} bookings in the system`,
+        `${paymentCount} payments recorded`,
       ],
     },
   });
-};
+}
 
 module.exports = {
   getDashboardSummary,

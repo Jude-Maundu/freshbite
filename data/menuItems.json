@@ -1,32 +1,202 @@
 [
   {
-    "id": "646856f8-5114-4d7f-ab61-8dc40a5b2f5f",
-    "name": "Fruit Parfait Cups",
-    "category": "Dessert",
-    "description": "Fresh fruit, yogurt, and crunchy granola cups.",
-    "price": 700,
-    "status": "featured",
-    "imageUrl": "/uploads/1782898825533-freshbites.jpeg",
-    "createdAt": "2026-07-01"
-  },
-  {
-    "id": "menu-seed-1",
-    "name": "Grilled Herb Chicken",
-    "category": "Main Course",
-    "description": "Tender grilled chicken served with fresh herbs and seasonal vegetables.",
-    "price": 1450,
+    "id": "menu-salad-grilled-chicken",
+    "name": "Grilled Chicken Salad",
+    "category": "Salads",
+    "description": "Lettuce, grilled chicken, cucumber, cherry tomatoes, carrots, olives, and light vinaigrette.",
+    "price": 450,
     "status": "featured",
     "imageUrl": "",
-    "createdAt": "2026-07-01"
+    "createdAt": "2026-07-06"
   },
   {
-    "id": "menu-seed-2",
-    "name": "Garden Quinoa Salad",
+    "id": "menu-salad-quinoa-power",
+    "name": "Quinoa Power Salad",
     "category": "Salads",
-    "description": "Colorful quinoa salad with crisp greens, cucumber, tomatoes, and citrus dressing.",
-    "price": 950,
+    "description": "Quinoa, black beans, corn, avocado, peppers, and lemon dressing.",
+    "price": 400,
     "status": "available",
     "imageUrl": "",
-    "createdAt": "2026-07-01"
+    "createdAt": "2026-07-06"
+  },
+  {
+    "id": "menu-salad-greek",
+    "name": "Greek Salad",
+    "category": "Salads",
+    "description": "Feta, cucumber, tomatoes, olives, red onions, and bell peppers.",
+    "price": 350,
+    "status": "available",
+    "imageUrl": "",
+    "createdAt": "2026-07-06"
+  },
+  {
+    "id": "menu-wrap-chicken-caesar",
+    "name": "Chicken Caesar Wrap",
+    "category": "Wraps & Sandwiches",
+    "description": "Grilled chicken, lettuce, parmesan, and Caesar sauce in a soft wrap.",
+    "price": 400,
+    "status": "featured",
+    "imageUrl": "",
+    "createdAt": "2026-07-06"
+  },
+  {
+    "id": "menu-wrap-veggie",
+    "name": "Veggie Wrap",
+    "category": "Wraps & Sandwiches",
+    "description": "Hummus, grilled vegetables, lettuce, carrots, and cucumber.",
+    "price": 350,
+    "status": "available",
+    "imageUrl": "",
+    "createdAt": "2026-07-06"
+  },
+  {
+    "id": "menu-sandwich-tuna-wholemeal",
+    "name": "Tuna Wholemeal Sandwich",
+    "category": "Wraps & Sandwiches",
+    "description": "Tuna, lettuce, tomato, cucumber, and light mayo on wholemeal bread.",
+    "price": 350,
+    "status": "available",
+    "imageUrl": "",
+    "createdAt": "2026-07-06"
+  },
+  {
+    "id": "menu-main-grilled-lemon-herb-chicken",
+    "name": "Grilled Lemon Herb Chicken",
+    "category": "Mains",
+    "description": "Served with roasted vegetables or steamed rice.",
+    "price": 600,
+    "status": "available",
+    "imageUrl": "",
+    "createdAt": "2026-07-06"
+  },
+  {
+    "id": "menu-main-beef-stir-fry",
+    "name": "Beef Stir Fry",
+    "category": "Mains",
+    "description": "Lean beef with colorful peppers and broccoli.",
+    "price": 600,
+    "status": "available",
+    "imageUrl": "",
+    "createdAt": "2026-07-06"
+  },
+  {
+    "id": "menu-main-honey-garlic-salmon",
+    "name": "Honey Garlic Salmon",
+    "category": "Mains",
+    "description": "Served with quinoa or brown rice.",
+    "price": 700,
+    "status": "featured",
+    "imageUrl": "",
+    "createdAt": "2026-07-06"
+  },
+  {
+    "id": "menu-main-vegetable-stir-fry",
+    "name": "Vegetable Stir Fry",
+    "category": "Mains",
+    "description": "Mixed vegetables, tofu, and a light soy glaze.",
+    "price": 450,
+    "status": "available",
+    "imageUrl": "",
+    "createdAt": "2026-07-06"
+  },
+  {
+    "id": "menu-main-pasta-primavera",
+    "name": "Pasta Primavera",
+    "category": "Mains",
+    "description": "Whole wheat pasta with seasonal vegetables in olive oil garlic sauce.",
+    "price": 450,
+    "status": "available",
+    "imageUrl": "",
+    "createdAt": "2026-07-06"
+  },
+  {
+    "id": "menu-side-steamed-vegetables",
+    "name": "Steamed Vegetables",
+    "category": "Sides",
+    "description": "A clean, colorful side that pairs well with grilled mains and buffet spreads.",
+    "price": 200,
+    "status": "available",
+    "imageUrl": "",
+    "createdAt": "2026-07-06"
+  },
+  {
+    "id": "menu-side-brown-rice-quinoa",
+    "name": "Brown Rice / Quinoa",
+    "category": "Sides",
+    "description": "Nutritious grains prepared for balanced event plates.",
+    "price": 200,
+    "status": "available",
+    "imageUrl": "",
+    "createdAt": "2026-07-06"
+  },
+  {
+    "id": "menu-side-roasted-potatoes",
+    "name": "Roasted Potatoes",
+    "category": "Sides",
+    "description": "Herb-roasted potatoes with a golden finish.",
+    "price": 200,
+    "status": "available",
+    "imageUrl": "",
+    "createdAt": "2026-07-06"
+  },
+  {
+    "id": "menu-side-garlic-bread",
+    "name": "Garlic Bread",
+    "category": "Sides",
+    "description": "Wholemeal garlic bread served warm.",
+    "price": 150,
+    "status": "available",
+    "imageUrl": "",
+    "createdAt": "2026-07-06"
+  },
+  {
+    "id": "menu-fruit-fresh-fruit-cup",
+    "name": "Fresh Fruit Cup",
+    "category": "Fruit & Yogurt Cups",
+    "description": "Seasonal fruits prepared as a bright, refreshing grab-and-go cup.",
+    "price": 250,
+    "status": "available",
+    "imageUrl": "",
+    "createdAt": "2026-07-06"
+  },
+  {
+    "id": "menu-fruit-yogurt-parfait",
+    "name": "Yogurt Parfait",
+    "category": "Fruit & Yogurt Cups",
+    "description": "Yogurt layered with granola, honey, and berries.",
+    "price": 250,
+    "status": "available",
+    "imageUrl": "",
+    "createdAt": "2026-07-06"
+  },
+  {
+    "id": "menu-beverage-detox-water",
+    "name": "Detox Infused Water",
+    "category": "Beverages",
+    "description": "Choose lemon mint, cucumber mint, or berry-infused refreshers.",
+    "price": 250,
+    "status": "available",
+    "imageUrl": "",
+    "createdAt": "2026-07-06"
+  },
+  {
+    "id": "menu-beverage-fresh-juice",
+    "name": "Fresh Juice",
+    "category": "Beverages",
+    "description": "Orange, pineapple, or watermelon served chilled.",
+    "price": 250,
+    "status": "available",
+    "imageUrl": "",
+    "createdAt": "2026-07-06"
+  },
+  {
+    "id": "menu-beverage-smoothies",
+    "name": "Smoothies",
+    "category": "Beverages",
+    "description": "Berry Blast, Mango Delight, or Green Detox.",
+    "price": 300,
+    "status": "seasonal",
+    "imageUrl": "",
+    "createdAt": "2026-07-06"
   }
 ]

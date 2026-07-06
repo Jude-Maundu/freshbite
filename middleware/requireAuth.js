@@ -1,14 +1,14 @@
 const User = require('../models/userModel');
 const { verifyAuthToken } = require('../utils/auth');
 
-async function requireAdminAuth(req, res, next) {
+async function requireAuth(req, res, next) {
   const authHeader = req.headers.authorization || '';
   const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : '';
 
   if (!token) {
     return res.status(401).json({
       success: false,
-      message: 'Admin authentication required.',
+      message: 'Authentication required.',
     });
   }
 
@@ -16,27 +16,21 @@ async function requireAdminAuth(req, res, next) {
     const payload = verifyAuthToken(token);
     const user = await User.findById(payload.sub).lean();
 
-    if (!user || user.role !== 'admin' || user.status !== 'active') {
+    if (!user || user.status !== 'active') {
       return res.status(401).json({
         success: false,
-        message: 'Invalid or expired admin session.',
+        message: 'Invalid or expired session.',
       });
     }
 
-    req.admin = {
-      id: String(user._id),
-      email: user.email,
-      role: user.role,
-      name: user.name,
-    };
-
+    req.user = user;
     return next();
   } catch (error) {
     return res.status(401).json({
       success: false,
-      message: 'Invalid or expired admin session.',
+      message: 'Invalid or expired session.',
     });
   }
 }
 
-module.exports = requireAdminAuth;
+module.exports = requireAuth;

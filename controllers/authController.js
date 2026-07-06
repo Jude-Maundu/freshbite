@@ -1,43 +1,86 @@
-const { v4: uuidv4 } = require('uuid');
-const { getAdminCredentials } = require('../models/adminModel');
-const { readCollection, writeCollection } = require('../utils/fileStore');
+const User = require('../models/userModel');
+const { comparePassword, hashPassword, serializeUser, signAuthToken } = require('../utils/auth');
 
-const login = async (req, res) => {
-  const { email, password } = req.body;
-  const admin = getAdminCredentials();
+async function login(req, res) {
+  const email = String(req.body.email || '').trim().toLowerCase();
+  const password = String(req.body.password || '');
 
-  if (email !== admin.email || password !== admin.password) {
+  const user = await User.findOne({ email });
+
+  if (!user || user.status !== 'active') {
     return res.status(401).json({
       success: false,
-      message: 'Invalid admin credentials.',
+      message: 'Invalid credentials.',
     });
   }
 
-  const token = uuidv4();
-  const sessions = await readCollection('adminSessions.json', []);
-  const session = {
-    token,
-    email: admin.email,
-    role: 'admin',
-    name: admin.name,
-    createdAt: new Date().toISOString(),
-  };
+  const isValidPassword = await comparePassword(password, user.passwordHash);
 
-  await writeCollection('adminSessions.json', [...sessions, session]);
+  if (!isValidPassword) {
+    return res.status(401).json({
+      success: false,
+      message: 'Invalid credentials.',
+    });
+  }
+
+  user.lastLoginAt = new Date();
+  await user.save();
+
+  const token = signAuthToken(user);
 
   return res.json({
     success: true,
-    message: 'Admin login successful.',
-    data: session,
+    message: `${user.role === 'admin' ? 'Admin' : 'User'} login successful.`,
+    data: {
+      token,
+      ...serializeUser(user),
+    },
   });
-};
+}
 
-const register = async (req, res) => {
-  return res.status(501).json({
-    success: false,
-    message: 'Customer registration is not implemented in this version.',
+async function register(req, res) {
+  const email = String(req.body.email || '').trim().toLowerCase();
+  const password = String(req.body.password || '');
+  const name = String(req.body.name || '').trim();
+  const phone = String(req.body.phone || '').trim();
+
+  if (!name || !email || !password) {
+    return res.status(400).json({
+      success: false,
+      message: 'Name, email, and password are required.',
+    });
+  }
+
+  const existingUser = await User.findOne({ email }).lean();
+
+  if (existingUser) {
+    return res.status(409).json({
+      success: false,
+      message: 'An account with that email already exists.',
+    });
+  }
+
+  const passwordHash = await hashPassword(password);
+  const user = await User.create({
+    name,
+    email,
+    phone,
+    passwordHash,
+    role: 'customer',
+    status: 'active',
   });
-};
+
+  const token = signAuthToken(user);
+
+  return res.status(201).json({
+    success: true,
+    message: 'Account created successfully.',
+    data: {
+      token,
+      ...serializeUser(user),
+    },
+  });
+}
 
 module.exports = {
   login,

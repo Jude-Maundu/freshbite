@@ -1,26 +1,52 @@
-const { createPayment: buildPayment } = require('../models/paymentModel');
-const { readCollection, writeCollection } = require('../utils/fileStore');
+const Booking = require('../models/bookingModel');
+const Payment = require('../models/paymentModel');
 
-const getPayments = async (req, res) => {
-  const payments = await readCollection('payments.json', []);
+function serializePayment(payment) {
+  return {
+    id: String(payment._id),
+    bookingReference: payment.bookingReference,
+    customerName: payment.customerName,
+    phone: payment.phone,
+    amount: payment.amount,
+    method: payment.method,
+    status: payment.status,
+    transactionId: payment.transactionId || '',
+    createdAt:
+      payment.createdAt instanceof Date
+        ? payment.createdAt.toISOString().slice(0, 10)
+        : String(payment.createdAt || '').slice(0, 10),
+  };
+}
+
+async function getPayments(req, res) {
+  const payments = await Payment.find().sort({ createdAt: -1, _id: -1 }).lean();
 
   return res.json({
     success: true,
-    data: payments,
+    data: payments.map(serializePayment),
   });
-};
+}
 
-const createPayment = async (req, res) => {
-  const payment = buildPayment(req.body);
-  const payments = await readCollection('payments.json', []);
-  await writeCollection('payments.json', [payment, ...payments]);
+async function createPayment(req, res) {
+  const booking = await Booking.findOne({ reference: req.body.bookingReference }).lean();
+
+  const payment = await Payment.create({
+    booking: booking?._id || null,
+    bookingReference: req.body.bookingReference,
+    customerName: req.body.customerName,
+    phone: req.body.phone,
+    amount: Number(req.body.amount),
+    method: req.body.method || 'M-Pesa',
+    status: req.body.status || 'completed',
+    transactionId: req.body.transactionId || '',
+  });
 
   return res.status(201).json({
     success: true,
     message: 'Payment recorded successfully.',
-    data: payment,
+    data: serializePayment(payment),
   });
-};
+}
 
 module.exports = {
   getPayments,

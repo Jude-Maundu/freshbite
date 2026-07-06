@@ -7,12 +7,14 @@ const dotenv = require('dotenv');
 const path = require('path');
 const fs = require('fs');
 
+const { connectDatabase } = require('./config/database');
 const authRoutes = require('./routes/authRoutes');
 const bookingRoutes = require('./routes/bookingRoutes');
 const quoteRoutes = require('./routes/quoteRoutes');
 const menuRoutes = require('./routes/menuRoutes');
 const paymentRoutes = require('./routes/paymentRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+const { bootstrapDatabase } = require('./seed/bootstrap');
 const notFound = require('./middleware/notFound');
 const errorHandler = require('./middleware/errorHandler');
 
@@ -68,6 +70,16 @@ if (fs.existsSync(frontendBuildPath)) {
 app.use(notFound);
 app.use(errorHandler);
 
-app.listen(PORT, () => {
-  console.log(`Fresh Bites API listening on port ${PORT}`);
+async function startServer() {
+  await connectDatabase();
+  await bootstrapDatabase();
+
+  app.listen(PORT, () => {
+    console.log(`Fresh Bites API listening on port ${PORT}`);
+  });
+}
+
+startServer().catch((error) => {
+  console.error('Failed to start Fresh Bites API', error);
+  process.exit(1);
 });
