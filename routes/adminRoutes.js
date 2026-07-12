@@ -4,15 +4,14 @@ const { getBookings, updateBookingStatus } = require('../controllers/bookingCont
 const { getMenuItems, createMenuItem, updateMenuItem, deleteMenuItem } = require('../controllers/menuController');
 const { getPayments } = require('../controllers/paymentController');
 const requireAdminAuth = require('../middleware/requireAdminAuth');
-const upload = require('../middleware/upload');
 
 const router = express.Router();
 
 router.use(requireAdminAuth);
 router.get('/dashboard', getDashboardSummary);
 router.get('/menu-items', getMenuItems);
-router.post('/menu-items', upload.single('image'), createMenuItem);
-router.patch('/menu-items/:id', upload.single('image'), updateMenuItem);
+router.post('/menu-items', createMenuItem);
+router.patch('/menu-items/:id', updateMenuItem);
 router.delete('/menu-items/:id', deleteMenuItem);
 router.get('/bookings', getBookings);
 router.patch('/bookings/:id/status', updateBookingStatus);

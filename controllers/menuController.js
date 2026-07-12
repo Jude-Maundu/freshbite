@@ -1,5 +1,3 @@
-const path = require('path');
-const fs = require('fs');
 const {
   createMenuItem: insertMenuItem,
   deleteMenuItem: removeMenuItemRecord,
@@ -8,22 +6,6 @@ const {
   updateMenuItem: saveMenuItem,
 } = require('../repositories/supabaseRepository');
 const { buildPublicMenuPayload, normalizeMenuItem } = require('../services/menuService');
-
-function resolveUploadPath(imageUrl = '') {
-  if (!imageUrl) {
-    return '';
-  }
-
-  return path.join(__dirname, '..', imageUrl.replace(/^\//, ''));
-}
-
-function removeImageFile(imageUrl = '') {
-  const filePath = resolveUploadPath(imageUrl);
-
-  if (filePath && fs.existsSync(filePath)) {
-    fs.unlinkSync(filePath);
-  }
-}
 
 async function getPublicMenu(req, res) {
   const menuItems = await listMenuItems({ ascending: true });
@@ -44,14 +26,13 @@ async function getMenuItems(req, res) {
 }
 
 async function createMenuItem(req, res) {
-  const imageUrl = req.file ? `/uploads/${req.file.filename}` : '';
   const menuItem = await insertMenuItem({
     name: req.body.name?.trim(),
     category: req.body.category?.trim(),
     description: req.body.description?.trim(),
     price: Number(req.body.price),
     status: String(req.body.status || 'available').trim().toLowerCase(),
-    imageUrl,
+    imageUrl: '',
   });
 
   return res.status(201).json({
@@ -71,21 +52,14 @@ async function updateMenuItem(req, res) {
     });
   }
 
-  const previousImageUrl = currentItem.imageUrl || '';
-  const nextImageUrl = req.file ? `/uploads/${req.file.filename}` : previousImageUrl;
-
   const updatedItem = await saveMenuItem(req.params.id, {
     name: req.body.name?.trim() || currentItem.name,
     category: req.body.category?.trim() || currentItem.category,
     description: req.body.description?.trim() || currentItem.description,
     price: Number.isFinite(Number(req.body.price)) ? Number(req.body.price) : currentItem.price,
     status: String(req.body.status || currentItem.status || 'available').trim().toLowerCase(),
-    imageUrl: nextImageUrl,
+    imageUrl: '',
   });
-
-  if (req.file && previousImageUrl && previousImageUrl !== nextImageUrl) {
-    removeImageFile(previousImageUrl);
-  }
 
   return res.json({
     success: true,
@@ -102,10 +76,6 @@ async function deleteMenuItem(req, res) {
       success: false,
       message: 'Menu item not found.',
     });
-  }
-
-  if (itemToDelete.imageUrl) {
-    removeImageFile(itemToDelete.imageUrl);
   }
 
   await removeMenuItemRecord(req.params.id);
