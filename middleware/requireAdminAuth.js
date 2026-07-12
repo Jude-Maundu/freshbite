@@ -1,4 +1,4 @@
-const User = require('../models/userModel');
+const { findUserById } = require('../repositories/supabaseRepository');
 const { verifyAuthToken } = require('../utils/auth');
 
 async function requireAdminAuth(req, res, next) {
@@ -14,7 +14,7 @@ async function requireAdminAuth(req, res, next) {
 
   try {
     const payload = verifyAuthToken(token);
-    const user = await User.findById(payload.sub).lean();
+    const user = await findUserById(payload.sub);
 
     if (!user || user.role !== 'admin' || user.status !== 'active') {
       return res.status(401).json({
@@ -24,7 +24,7 @@ async function requireAdminAuth(req, res, next) {
     }
 
     req.admin = {
-      id: String(user._id),
+      id: String(user.id || user._id),
       email: user.email,
       role: user.role,
       name: user.name,

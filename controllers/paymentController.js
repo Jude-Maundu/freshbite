@@ -1,9 +1,12 @@
-const Booking = require('../models/bookingModel');
-const Payment = require('../models/paymentModel');
+const {
+  createPayment: insertPayment,
+  findBookingByReference,
+  listPayments,
+} = require('../repositories/supabaseRepository');
 
 function serializePayment(payment) {
   return {
-    id: String(payment._id),
+    id: String(payment.id || payment._id),
     bookingReference: payment.bookingReference,
     customerName: payment.customerName,
     phone: payment.phone,
@@ -19,7 +22,7 @@ function serializePayment(payment) {
 }
 
 async function getPayments(req, res) {
-  const payments = await Payment.find().sort({ createdAt: -1, _id: -1 }).lean();
+  const payments = await listPayments();
 
   return res.json({
     success: true,
@@ -28,10 +31,10 @@ async function getPayments(req, res) {
 }
 
 async function createPayment(req, res) {
-  const booking = await Booking.findOne({ reference: req.body.bookingReference }).lean();
+  const booking = await findBookingByReference(req.body.bookingReference);
 
-  const payment = await Payment.create({
-    booking: booking?._id || null,
+  const payment = await insertPayment({
+    booking: booking?.id || booking?._id || null,
     bookingReference: req.body.bookingReference,
     customerName: req.body.customerName,
     phone: req.body.phone,

@@ -1,9 +1,9 @@
-const Booking = require('../models/bookingModel');
+const { createBooking: insertBooking, listBookings, updateBookingStatus: setBookingStatus } = require('../repositories/supabaseRepository');
 const { buildBookingReference } = require('../utils/reference');
 
 function serializeBooking(booking) {
   return {
-    id: String(booking._id),
+    id: String(booking.id || booking._id),
     reference: booking.reference,
     clientName: booking.clientName,
     email: booking.email,
@@ -25,7 +25,7 @@ function serializeBooking(booking) {
 }
 
 async function getBookings(req, res) {
-  const bookings = await Booking.find().sort({ createdAt: -1, _id: -1 }).lean();
+  const bookings = await listBookings();
 
   return res.json({
     success: true,
@@ -34,7 +34,7 @@ async function getBookings(req, res) {
 }
 
 async function createBooking(req, res) {
-  const booking = await Booking.create({
+  const booking = await insertBooking({
     reference: buildBookingReference(),
     clientName: req.body.clientName,
     email: req.body.email,
@@ -48,7 +48,7 @@ async function createBooking(req, res) {
     paymentOption: req.body.paymentOption,
     specialRequests: req.body.specialRequests || '',
     status: 'pending',
-    createdBy: req.user?._id || null,
+    createdBy: req.user?.id || req.user?._id || null,
   });
 
   return res.status(201).json({
@@ -59,11 +59,7 @@ async function createBooking(req, res) {
 }
 
 async function updateBookingStatus(req, res) {
-  const booking = await Booking.findByIdAndUpdate(
-    req.params.id,
-    { status: req.body.status || 'pending' },
-    { new: true }
-  );
+  const booking = await setBookingStatus(req.params.id, req.body.status || 'pending');
 
   if (!booking) {
     return res.status(404).json({

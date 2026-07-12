@@ -1,6 +1,12 @@
 const path = require('path');
 const fs = require('fs');
-const MenuItem = require('../models/menuItemModel');
+const {
+  createMenuItem: insertMenuItem,
+  deleteMenuItem: removeMenuItemRecord,
+  findMenuItemById,
+  listMenuItems,
+  updateMenuItem: saveMenuItem,
+} = require('../repositories/supabaseRepository');
 const { buildPublicMenuPayload, normalizeMenuItem } = require('../services/menuService');
 
 function resolveUploadPath(imageUrl = '') {
@@ -20,7 +26,7 @@ function removeImageFile(imageUrl = '') {
 }
 
 async function getPublicMenu(req, res) {
-  const menuItems = await MenuItem.find().sort({ createdAt: 1, _id: 1 }).lean();
+  const menuItems = await listMenuItems({ ascending: true });
 
   res.json({
     success: true,
@@ -29,7 +35,7 @@ async function getPublicMenu(req, res) {
 }
 
 async function getMenuItems(req, res) {
-  const menuItems = await MenuItem.find().sort({ createdAt: -1, _id: -1 }).lean();
+  const menuItems = await listMenuItems();
 
   res.json({
     success: true,
@@ -39,7 +45,7 @@ async function getMenuItems(req, res) {
 
 async function createMenuItem(req, res) {
   const imageUrl = req.file ? `/uploads/${req.file.filename}` : '';
-  const menuItem = await MenuItem.create({
+  const menuItem = await insertMenuItem({
     name: req.body.name?.trim(),
     category: req.body.category?.trim(),
     description: req.body.description?.trim(),
@@ -51,12 +57,12 @@ async function createMenuItem(req, res) {
   return res.status(201).json({
     success: true,
     message: 'Menu item created successfully.',
-    data: normalizeMenuItem(menuItem.toObject()),
+    data: normalizeMenuItem(menuItem),
   });
 }
 
 async function updateMenuItem(req, res) {
-  const currentItem = await MenuItem.findById(req.params.id);
+  const currentItem = await findMenuItemById(req.params.id);
 
   if (!currentItem) {
     return res.status(404).json({
@@ -68,28 +74,28 @@ async function updateMenuItem(req, res) {
   const previousImageUrl = currentItem.imageUrl || '';
   const nextImageUrl = req.file ? `/uploads/${req.file.filename}` : previousImageUrl;
 
-  currentItem.name = req.body.name?.trim() || currentItem.name;
-  currentItem.category = req.body.category?.trim() || currentItem.category;
-  currentItem.description = req.body.description?.trim() || currentItem.description;
-  currentItem.price = Number.isFinite(Number(req.body.price)) ? Number(req.body.price) : currentItem.price;
-  currentItem.status = String(req.body.status || currentItem.status || 'available').trim().toLowerCase();
-  currentItem.imageUrl = nextImageUrl;
+  const updatedItem = await saveMenuItem(req.params.id, {
+    name: req.body.name?.trim() || currentItem.name,
+    category: req.body.category?.trim() || currentItem.category,
+    description: req.body.description?.trim() || currentItem.description,
+    price: Number.isFinite(Number(req.body.price)) ? Number(req.body.price) : currentItem.price,
+    status: String(req.body.status || currentItem.status || 'available').trim().toLowerCase(),
+    imageUrl: nextImageUrl,
+  });
 
   if (req.file && previousImageUrl && previousImageUrl !== nextImageUrl) {
     removeImageFile(previousImageUrl);
   }
 
-  await currentItem.save();
-
   return res.json({
     success: true,
     message: 'Menu item updated successfully.',
-    data: normalizeMenuItem(currentItem.toObject()),
+    data: normalizeMenuItem(updatedItem),
   });
 }
 
 async function deleteMenuItem(req, res) {
-  const itemToDelete = await MenuItem.findById(req.params.id);
+  const itemToDelete = await findMenuItemById(req.params.id);
 
   if (!itemToDelete) {
     return res.status(404).json({
@@ -102,7 +108,7 @@ async function deleteMenuItem(req, res) {
     removeImageFile(itemToDelete.imageUrl);
   }
 
-  await itemToDelete.deleteOne();
+  await removeMenuItemRecord(req.params.id);
 
   return res.json({
     success: true,

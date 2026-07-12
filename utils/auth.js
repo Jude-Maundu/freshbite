@@ -16,9 +16,11 @@ async function comparePassword(password, passwordHash) {
 }
 
 function signAuthToken(user) {
+  const userId = user.id || user._id;
+
   return jwt.sign(
     {
-      sub: String(user._id),
+      sub: String(userId),
       email: user.email,
       role: user.role,
       name: user.name,
@@ -33,8 +35,10 @@ function verifyAuthToken(token) {
 }
 
 function serializeUser(user) {
+  const userId = user.id || user._id;
+
   return {
-    id: String(user._id),
+    id: String(userId),
     name: user.name,
     email: user.email,
     role: user.role,

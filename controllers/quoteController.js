@@ -1,8 +1,8 @@
-const Quote = require('../models/quoteModel');
+const { createQuote: insertQuote, listQuotes } = require('../repositories/supabaseRepository');
 
 function serializeQuote(quote) {
   return {
-    id: String(quote._id),
+    id: String(quote.id || quote._id),
     clientName: quote.clientName,
     email: quote.email,
     phone: quote.phone,
@@ -21,7 +21,7 @@ function serializeQuote(quote) {
 }
 
 async function getQuotes(req, res) {
-  const quotes = await Quote.find().sort({ createdAt: -1, _id: -1 }).lean();
+  const quotes = await listQuotes();
 
   res.json({
     success: true,
@@ -30,7 +30,7 @@ async function getQuotes(req, res) {
 }
 
 async function createQuote(req, res) {
-  const quote = await Quote.create({
+  const quote = await insertQuote({
     clientName: req.body.clientName || 'Quote Request',
     email: req.body.email,
     phone: req.body.phone || '',

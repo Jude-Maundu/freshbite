@@ -1,11 +1,11 @@
-const User = require('../models/userModel');
 const { comparePassword, hashPassword, serializeUser, signAuthToken } = require('../utils/auth');
+const { createUser, findUserByEmail, updateUser } = require('../repositories/supabaseRepository');
 
 async function login(req, res) {
   const email = String(req.body.email || '').trim().toLowerCase();
   const password = String(req.body.password || '');
 
-  const user = await User.findOne({ email });
+  const user = await findUserByEmail(email);
 
   if (!user || user.status !== 'active') {
     return res.status(401).json({
@@ -23,17 +23,16 @@ async function login(req, res) {
     });
   }
 
-  user.lastLoginAt = new Date();
-  await user.save();
+  const updatedUser = await updateUser(user.id, { lastLoginAt: new Date().toISOString() });
 
-  const token = signAuthToken(user);
+  const token = signAuthToken(updatedUser);
 
   return res.json({
     success: true,
-    message: `${user.role === 'admin' ? 'Admin' : 'User'} login successful.`,
+    message: `${updatedUser.role === 'admin' ? 'Admin' : 'User'} login successful.`,
     data: {
       token,
-      ...serializeUser(user),
+      ...serializeUser(updatedUser),
     },
   });
 }
@@ -51,7 +50,7 @@ async function register(req, res) {
     });
   }
 
-  const existingUser = await User.findOne({ email }).lean();
+  const existingUser = await findUserByEmail(email);
 
   if (existingUser) {
     return res.status(409).json({
@@ -61,7 +60,7 @@ async function register(req, res) {
   }
 
   const passwordHash = await hashPassword(password);
-  const user = await User.create({
+  const user = await createUser({
     name,
     email,
     phone,

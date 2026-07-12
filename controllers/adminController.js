@@ -1,20 +1,26 @@
-const Booking = require('../models/bookingModel');
-const Payment = require('../models/paymentModel');
-const MenuItem = require('../models/menuItemModel');
+const {
+  countBookings,
+  countBookingsCreatedSince,
+  countBookingsNotCompleted,
+  countMenuItems,
+  countPayments,
+  countQuotesByStatus,
+  sumPaymentAmounts,
+} = require('../repositories/supabaseRepository');
 
 async function getDashboardSummary(req, res) {
   const todayStart = new Date();
   todayStart.setHours(0, 0, 0, 0);
 
-  const [todaysBookings, upcomingEvents, pendingQuotations, revenueStats, menuCount, bookingCount, paymentCount] =
+  const [todaysBookings, upcomingEvents, pendingQuotations, revenueTotal, menuCount, bookingCount, paymentCount] =
     await Promise.all([
-      Booking.countDocuments({ createdAt: { $gte: todayStart } }),
-      Booking.countDocuments({ status: { $ne: 'completed' } }),
-      Booking.countDocuments({ status: 'pending' }),
-      Payment.aggregate([{ $group: { _id: null, total: { $sum: '$amount' } } }]),
-      MenuItem.countDocuments(),
-      Booking.countDocuments(),
-      Payment.countDocuments(),
+      countBookingsCreatedSince(todayStart),
+      countBookingsNotCompleted(),
+      countQuotesByStatus('review'),
+      sumPaymentAmounts(),
+      countMenuItems(),
+      countBookings(),
+      countPayments(),
     ]);
 
   return res.json({
@@ -23,7 +29,7 @@ async function getDashboardSummary(req, res) {
       todaysBookings,
       upcomingEvents,
       pendingQuotations,
-      revenueTotal: revenueStats[0]?.total || 0,
+      revenueTotal,
       recentActivities: [
         `${menuCount} menu items currently published`,
         `${bookingCount} bookings in the system`,

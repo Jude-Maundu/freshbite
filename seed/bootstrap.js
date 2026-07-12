@@ -1,16 +1,23 @@
 const { readCollection } = require('../utils/fileStore');
 const { hashPassword } = require('../utils/auth');
 const { buildBookingReference } = require('../utils/reference');
-const User = require('../models/userModel');
-const MenuItem = require('../models/menuItemModel');
-const Booking = require('../models/bookingModel');
-const Payment = require('../models/paymentModel');
-const Quote = require('../models/quoteModel');
+const {
+  countBookings,
+  countMenuItems,
+  countPayments,
+  countQuotes,
+  createQuote,
+  createUser,
+  findUserByEmail,
+  seedBookings: insertSeedBookings,
+  seedMenuItems: insertSeedMenuItems,
+  seedPayments: insertSeedPayments,
+} = require('../repositories/supabaseRepository');
 
 async function ensureAdminUser() {
   const email = (process.env.ADMIN_EMAIL || 'admin@freshbites.ke').toLowerCase();
   const password = process.env.ADMIN_PASSWORD || 'FreshBites2026!';
-  const existingAdmin = await User.findOne({ email });
+  const existingAdmin = await findUserByEmail(email);
 
   if (existingAdmin) {
     return existingAdmin;
@@ -18,7 +25,7 @@ async function ensureAdminUser() {
 
   const passwordHash = await hashPassword(password);
 
-  return User.create({
+  return createUser({
     name: 'Fresh Bites Admin',
     email,
     passwordHash,
@@ -28,7 +35,7 @@ async function ensureAdminUser() {
 }
 
 async function seedMenuItems() {
-  if ((await MenuItem.estimatedDocumentCount()) > 0) {
+  if ((await countMenuItems()) > 0) {
     return;
   }
 
@@ -37,7 +44,7 @@ async function seedMenuItems() {
     return;
   }
 
-  await MenuItem.insertMany(
+  await insertSeedMenuItems(
     items.map((item) => ({
       name: item.name,
       category: item.category,
@@ -47,13 +54,12 @@ async function seedMenuItems() {
       imageUrl: item.imageUrl || '',
       createdAt: item.createdAt ? new Date(item.createdAt) : new Date(),
       updatedAt: item.createdAt ? new Date(item.createdAt) : new Date(),
-    })),
-    { ordered: false }
+    }))
   );
 }
 
 async function seedBookings() {
-  if ((await Booking.estimatedDocumentCount()) > 0) {
+  if ((await countBookings()) > 0) {
     return;
   }
 
@@ -62,7 +68,7 @@ async function seedBookings() {
     return;
   }
 
-  await Booking.insertMany(
+  await insertSeedBookings(
     items.map((item) => ({
       reference: item.reference || buildBookingReference(new Date(item.createdAt || Date.now())),
       clientName: item.clientName,
@@ -79,13 +85,12 @@ async function seedBookings() {
       status: item.status || 'pending',
       createdAt: item.createdAt ? new Date(item.createdAt) : new Date(),
       updatedAt: item.createdAt ? new Date(item.createdAt) : new Date(),
-    })),
-    { ordered: false }
+    }))
   );
 }
 
 async function seedPayments() {
-  if ((await Payment.estimatedDocumentCount()) > 0) {
+  if ((await countPayments()) > 0) {
     return;
   }
 
@@ -94,7 +99,7 @@ async function seedPayments() {
     return;
   }
 
-  await Payment.insertMany(
+  await insertSeedPayments(
     items.map((item) => ({
       bookingReference: item.bookingReference,
       customerName: item.customerName,
@@ -106,17 +111,16 @@ async function seedPayments() {
       paidAt: item.createdAt ? new Date(item.createdAt) : new Date(),
       createdAt: item.createdAt ? new Date(item.createdAt) : new Date(),
       updatedAt: item.createdAt ? new Date(item.createdAt) : new Date(),
-    })),
-    { ordered: false }
+    }))
   );
 }
 
 async function seedQuotes() {
-  if ((await Quote.estimatedDocumentCount()) > 0) {
+  if ((await countQuotes()) > 0) {
     return;
   }
 
-  await Quote.create({
+  await createQuote({
     clientName: 'Sample Client',
     email: 'sample@freshbites.ke',
     phone: '0710500813',

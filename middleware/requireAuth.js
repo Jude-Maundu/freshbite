@@ -1,4 +1,4 @@
-const User = require('../models/userModel');
+const { findUserById } = require('../repositories/supabaseRepository');
 const { verifyAuthToken } = require('../utils/auth');
 
 async function requireAuth(req, res, next) {
@@ -14,7 +14,7 @@ async function requireAuth(req, res, next) {
 
   try {
     const payload = verifyAuthToken(token);
-    const user = await User.findById(payload.sub).lean();
+    const user = await findUserById(payload.sub);
 
     if (!user || user.status !== 'active') {
       return res.status(401).json({
