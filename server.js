@@ -22,10 +22,37 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+const defaultAllowedOrigins = ['http://localhost:3000', 'http://127.0.0.1:3000'];
+
+function buildAllowedOrigins() {
+  const envOrigins = [process.env.CLIENT_URL, process.env.CLIENT_URLS]
+    .filter(Boolean)
+    .flatMap((value) => String(value).split(','))
+    .map((value) => value.trim())
+    .filter(Boolean);
+
+  return Array.from(new Set([...defaultAllowedOrigins, ...envOrigins]));
+}
+
+const allowedOrigins = buildAllowedOrigins();
 
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || 'http://localhost:3000',
+    origin(origin, callback) {
+      if (!origin) {
+        return callback(null, true);
+      }
+
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      return callback(
+        new Error(
+          `CORS origin not allowed: ${origin}. Add it to CLIENT_URL or CLIENT_URLS.`
+        )
+      );
+    },
     credentials: true,
   })
 );
