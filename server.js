@@ -23,6 +23,7 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 const defaultAllowedOrigins = ['http://localhost:3000', 'http://127.0.0.1:3000'];
+const renderPreviewOriginPattern = /^https:\/\/[a-z0-9-]+\.onrender\.com$/i;
 
 function buildAllowedOrigins() {
   const envOrigins = [process.env.CLIENT_URL, process.env.CLIENT_URLS]
@@ -36,14 +37,22 @@ function buildAllowedOrigins() {
 
 const allowedOrigins = buildAllowedOrigins();
 
+function isAllowedOrigin(origin = '') {
+  if (!origin) {
+    return true;
+  }
+
+  if (allowedOrigins.includes(origin)) {
+    return true;
+  }
+
+  return renderPreviewOriginPattern.test(origin);
+}
+
 app.use(
   cors({
     origin(origin, callback) {
-      if (!origin) {
-        return callback(null, true);
-      }
-
-      if (allowedOrigins.includes(origin)) {
+      if (isAllowedOrigin(origin)) {
         return callback(null, true);
       }
 
@@ -54,6 +63,7 @@ app.use(
       );
     },
     credentials: true,
+    optionsSuccessStatus: 204,
   })
 );
 app.use(helmet());
